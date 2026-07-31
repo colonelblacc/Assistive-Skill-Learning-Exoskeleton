@@ -1,7 +1,7 @@
-# 🦾 Assistive Surgical Skill Exoskeleton
-### `assistive-surgical-skill-exo`
+# 🦾 Assistive Skill-Learning Exoskeleton
+### `assistive-skill-learning-exoskeleton`
 
-> **A Hybrid EMS + Mechanical Exoskeleton System for Motor Skill Learning and Neuro-Rehabilitation**  
+> **A Hybrid EMS + Mechanical Exoskeleton System for General Motor Skill Learning**  
 > Powered by a Local Edge NPU Vision-Language Model (VLM) with Closed-Loop sEMG Bio-Feedback
 
 <div align="center">
@@ -9,8 +9,8 @@
 ![Platform](https://img.shields.io/badge/Platform-Radxa%20ROCK%205B%20%7C%20Raspberry%20Pi%205-blue)
 ![MCU](https://img.shields.io/badge/MCU-Arduino%20Uno%20%7C%20ESP32-green)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
-![Phase](https://img.shields.io/badge/Project%20Phase-ECD%20415%20Phase%201-red)
-![Institution](https://img.shields.io/badge/Institution-GMEC%20Thrikkakara-orange)
+![Status](https://img.shields.io/badge/Status-Phase%201%20Active-brightgreen)
+![Use%20Case](https://img.shields.io/badge/Use%20Case-Drawing%20%7C%20Writing%20%7C%20Craft-purple)
 
 </div>
 
@@ -35,29 +35,22 @@
 
 ## 1. Project Overview
 
-**Course:** ECD 415 — Project Phase 1  
-**Institution:** Govt. Model Engineering College, Thrikkakara — Dept. of Electronics & Communication Engineering  
-**Author:** Ajith Shajan (Roll No: EC5 | Class: EC7B | Group: EC-08)  
-**Topic:** Design and Implementation of a 32-Channel Closed-Loop sEMG-EMS Neuro-Rehabilitation System with Local Edge NPU VLM Guidance
-
----
-
 ### What This Project Does
 
-Existing physiotherapy and neuro-rehabilitation systems for post-stroke hemiplegia and motor neuron disorders face critical limitations:
+Learning a new motor skill — whether drawing, handwriting, playing an instrument, or performing delicate craft work — is a slow, repetitive process. Traditional approaches rely entirely on trial and error with no physical guidance.
 
-- **Commercial robotic gloves** are rigid, bulky, and cost ₹15L–₹40L
-- **Standard EMS units** have no real-time bio-feedback or intelligent intent recognition
-- **Cloud-dependent AI systems** introduce latency, data privacy risk, and subscription costs
+This project presents an **Assistive Skill-Learning Exoskeleton**: a two-layer hybrid wearable system that physically guides and reinforces correct hand and finger movements while you learn:
 
-This project presents a **two-layer Hybrid Assistive System** that combines:
+1. **Mechanical Exoskeleton Layer** — Servo-driven finger and wrist joints that physically guide your hand through the correct motion path (e.g., drawing a straight line, forming a letter, following a contour)
+2. **EMS Reinforcement Layer** — 32-channel Electrical Muscle Stimulation that simultaneously contracts the correct muscles beneath the skin, teaching your body the right muscle recruitment pattern at a proprioceptive level
 
-1. **Mechanical Exoskeleton Layer** — Servo-driven finger and wrist joints that physically guide limb motion with precision, suitable for surgical skill teaching
-2. **EMS Reinforcement Layer** — 32-channel Electrical Muscle Stimulation that simultaneously trains proprioceptive muscle memory by directly contracting the underlying muscles
+Both layers are commanded by a **fully offline Edge AI** — a quantized Vision-Language Model (VLM) running locally on a **Radxa ROCK 5B (RK3588, 6 TOPS NPU)** — that watches your hand via a first-person camera and decides in real-time which correction to apply. The system is regulated by a **closed-loop sEMG PID controller** that reads your voluntary muscle intent to avoid over-stimulation.
 
-Both layers are commanded by a **fully offline Edge AI** — a quantized Vision-Language Model (VLM) running locally on a **Radxa ROCK 5B (RK3588, 6 TOPS NPU)** — and regulated by a **closed-loop sEMG PID controller** that reads real-time muscle bioelectrical feedback.
+### Phase 1 — Drawing & Handwriting Skill Trainer
+> The initial implementation targets **drawing and handwriting**: the system reads a reference image (e.g., a circle, a letter, a diagram), tracks the user's pen/stylus position via camera, and applies guided exoskeleton motion + EMS reinforcement to keep the hand on the correct trajectory.
 
-> **Long-Term Vision:** A skill-learning platform where surgeons can practise delicate instrument manipulation. The system records expert hand motions, then plays them back through the exoskeleton+EMS layers to teach novice surgeons the correct muscle recruitment patterns and joint trajectories — offline, without any cloud dependency.
+### Future Vision — Surgical & Clinical Applications
+> In later phases, the same platform can be adapted for surgical skill training: recording expert surgeon hand motions and playing them back through the exo+EMS layers to teach motor patterns to novice surgeons — 100% offline, no cloud dependency.
 
 ---
 
@@ -65,7 +58,7 @@ Both layers are commanded by a **fully offline Edge AI** — a quantized Vision-
 
 ```
 +----------------------------------------------------------------------+
-|          HYBRID ASSISTIVE SURGICAL SKILL EXOSKELETON                 |
+|          HYBRID ASSISTIVE SKILL-LEARNING EXOSKELETON                 |
 |                                                                      |
 |  +----------------------------------+                                |
 |  |    PERCEPTION & LOCAL EDGE AI   |  <-- 100% Offline              |
@@ -115,13 +108,13 @@ Both layers are commanded by a **fully offline Edge AI** — a quantized Vision-
 - **Hardware:** Radxa ROCK 5B (RK3588, integrated 6 TOPS NPU)
 - **Models:** Moondream2 INT4 / MiniCPM-V INT4 via RKNN-LLM runtime
 - **Performance:** < 70ms visual inference per frame — fully offline, no internet required
-- **Task:** Interprets first-person camera view and maps the scene to an action plan (e.g., *"user is attempting to pick up scalpel → activate thumb + index pinch pattern"*)
+- **Task:** Watches the user's hand via first-person camera, compares position against a reference drawing/path, and sends real-time correction commands (e.g., *"hand drifting left during circle stroke → apply gentle wrist correction + index extension EMS"*)
 
 ### Feature 2 — Mechanical Exoskeleton Layer
 - **Actuators:** MG90S micro-servo motors (5 fingers + wrist = 6 DoF minimum)
 - **Driver:** PCA9685 16-channel I2C PWM servo controller
 - **Structure:** 3D-printed PLA/PETG finger shells with tendon-cable or rigid 4-bar linkage
-- **Function:** Physically guides finger and wrist joints along learned trajectories
+- **Function:** Physically guides finger and wrist joints along a target skill trajectory (drawing path, pen stroke, contour line)
 
 ### Feature 3 — sEMG Closed-Loop Feedback
 - **Bio-sensors:** AD8221 instrumentation amplifier modules / MyoWare 2.0
@@ -448,28 +441,31 @@ void stimulate_finger(int relay_pin, int intensity_level) {
 
 ## 9. Implementation Roadmap
 
-### Phase 1 — Proof of Concept `~₹20,000` (ECD 415 Submission)
+### Phase 1 — Drawing & Handwriting Skill Trainer `~₹20,000`
 - [x] 7-channel EMS relay matrix (wrist + 5 fingers)
-- [x] VLM on host laptop via cloud API (Claude / GPT-4o)
+- [x] VLM on host laptop via cloud API (Claude / GPT-4o) for rapid prototyping
 - [ ] 2-finger servo exoskeleton (Thumb + Index) — MG90S + PCA9685
+- [ ] Camera-based hand position tracking (OpenCV) vs reference drawing
+- [ ] Real-time correction: exo guides pen along target path
 - [ ] sEMG sensing + real-time RMS display
 - [ ] Manual calibration GUI (PyQt5)
 - [ ] Hardware E-STOP wiring and safety verification
 
-### Phase 2 — Closed-Loop Integration `~₹45,000`
+### Phase 2 — General Skill Learning Platform `~₹45,000`
 - [ ] Full 5-finger + wrist exoskeleton (6 DoF)
 - [ ] Deploy VLM locally on Radxa ROCK 5B (RKNN-LLM, fully offline)
 - [ ] sEMG closed-loop PID controller
 - [ ] Scale EMS to 16-channel relay matrix
-- [ ] Motion capture and trajectory recording module
+- [ ] Motion library: record expert user strokes, replay as guided correction
+- [ ] Support multiple skill domains: drawing, instrument playing, craft tasks
 
-### Phase 3 — Surgical Skill Training Platform `~₹70,000+`
+### Phase 3 — Clinical & Surgical Training Applications `~₹70,000+`
 - [ ] Full 32-channel EMS array
 - [ ] Expert surgeon motion library recording and playback
-- [ ] Simultaneous exo + EMS replay of expert trajectories
-- [ ] Fugl-Meyer Assessment (FMA) & ARAT clinical evaluation
+- [ ] Simultaneous exo + EMS replay of expert surgical trajectories
+- [ ] Fugl-Meyer Assessment (FMA) & ARAT clinical evaluation for rehab patients
 - [ ] Wireless BLE stimulator integration (PowerDot / Compex)
-- [ ] IEEE publication preparation and clinical trial application
+- [ ] IEEE publication preparation and clinical trial ethics application
 
 ---
 
@@ -510,17 +506,16 @@ void stimulate_finger(int relay_pin, int intensity_level) {
 **License:** MIT — see [LICENSE](LICENSE) for details.
 
 **Acknowledgements:**
-- Dept. of Electronics & Communication Engineering, Govt. Model Engineering College, Thrikkakara
-- Project Coordinator, Guide/Supervisor, and Head of Department (ECE)
 - Rockchip / Radxa community for RKNN-LLM toolchain
 - MIT Media Lab — Fluid Interfaces Group (Human Operator project inspiration)
+- openEMSstim research project contributors
 
 ---
 
 <div align="center">
 
-**Made with ❤️ at GMEC Thrikkakara | ECD 415 — Major Project Phase 1**
+**Assistive Skill-Learning Exoskeleton — Open Source Research Project**
 
-*"Teaching muscles to remember. Teaching surgeons to feel."*
+*"Teaching muscles to remember. Teaching hands to create."*
 
 </div>
